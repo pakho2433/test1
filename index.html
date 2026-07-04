@@ -3,35 +3,37 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#090b2e">
+  <meta name="theme-color" content="#07102f">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>星光跳跳島 v3</title>
-  <link rel="stylesheet" href="./style.css?v=3">
+  <title>乘法王 v4</title>
+  <link rel="stylesheet" href="./style.css?v=4">
   <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
 <body>
   <div id="hud">
-    <div id="hint" class="panel">左邊搖桿移動，右邊畫面拖動視角。</div>
-    <div id="score" class="panel">⭐ 0 / 5</div>
+    <div id="question" class="panel">3 × 4 = ?</div>
+    <div id="hint" class="panel">跳到正確答案平台。</div>
+    <div id="status" class="panel">第 1/10 關｜錯誤 0</div>
   </div>
 
   <div id="controls">
     <div id="joystick" aria-label="移動搖桿"><div id="stick"></div></div>
-    <button id="jump">跳躍</button>
+    <button id="jump">跳躍<small>可二段跳</small></button>
   </div>
 
   <div id="lookHint">右半畫面拖動：360° 視角</div>
-  <div id="version">v3・Joystick＋360°</div>
+  <div id="version">v4・乘法王</div>
+  <div id="toast"></div>
 
   <div id="overlay">
     <div id="card">
-      <h1>星光跳跳島</h1>
-      <p>左邊使用虛擬搖桿移動。<br>在右半畫面拖動，可 360° 自由旋轉視角。<br>收集 5 顆星星後進入終點。</p>
-      <button id="start">開始遊戲</button>
+      <h1>乘法王</h1>
+      <p>每關有 3 至 4 個答案平台。<br>跳中正確答案即可進入下一關。<br>答錯的平台會立即踩空下墜。<br>跳躍按鈕可連按兩次進行二段跳。</p>
+      <button id="start">開始挑戰</button>
     </div>
   </div>
 
   <pre id="error"></pre>
-  <script type="module" src="./game.js?v=3"></script>
+  <script type="module" src="./multiplication.js?v=4"></script>
 </body>
 </html>
