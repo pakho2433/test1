@@ -1,121 +1,156 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <meta name="theme-color" content="#090727" />
-  <title>星光跳跳島</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#090b2e">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>星光跳跳島 v2</title>
   <style>
-    :root { color-scheme: dark; --glass: rgba(13,11,48,.7); --line: rgba(170,200,255,.42); }
-    * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-    html,body { width:100%; height:100%; margin:0; overflow:hidden; background:#090727; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif; touch-action:none; }
-    canvas { display:block; width:100%; height:100%; }
-    #hud { position:fixed; inset:env(safe-area-inset-top) 0 auto 0; z-index:5; display:flex; justify-content:space-between; gap:12px; padding:14px; pointer-events:none; }
-    .panel { border:1px solid var(--line); background:var(--glass); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:0 10px 30px rgba(0,0,0,.28),inset 0 0 24px rgba(117,126,255,.12); border-radius:16px; padding:10px 14px; font-weight:750; text-shadow:0 1px 6px rgba(0,0,0,.65); }
-    #hint { max-width:min(65vw,430px); font-size:14px; }
-    #score { white-space:nowrap; }
-    #controls { position:fixed; left:0; right:0; bottom:max(14px,env(safe-area-inset-bottom)); z-index:6; display:flex; align-items:end; justify-content:space-between; padding:16px; pointer-events:none; }
-    .pad { display:grid; grid-template-columns:repeat(3,58px); grid-template-rows:repeat(2,58px); gap:8px; pointer-events:auto; }
-    .btn { border:1px solid rgba(200,220,255,.5); background:rgba(15,13,60,.72); color:white; border-radius:17px; font-size:22px; font-weight:900; box-shadow:0 8px 24px rgba(0,0,0,.28),inset 0 0 18px rgba(94,126,255,.14); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); user-select:none; -webkit-user-select:none; display:grid; place-items:center; }
-    .btn.active,.btn:active { transform:scale(.94); background:rgba(73,66,170,.88); box-shadow:0 0 22px rgba(119,164,255,.6); }
-    #up { grid-column:2; grid-row:1; } #left { grid-column:1; grid-row:2; } #down { grid-column:2; grid-row:2; } #right { grid-column:3; grid-row:2; }
-    #jump { pointer-events:auto; width:86px; height:86px; border-radius:28px; font-size:18px; color:#1c1232; background:linear-gradient(145deg,#ffe873,#ff9e3d); border-color:rgba(255,255,255,.72); box-shadow:0 10px 30px rgba(255,158,61,.35),inset 0 0 20px rgba(255,255,255,.38); }
-    #overlay { position:fixed; inset:0; z-index:10; display:grid; place-items:center; padding:24px; background:radial-gradient(circle at 50% 38%,rgba(62,48,145,.38),rgba(5,4,25,.9)); }
-    #card { width:min(92vw,460px); text-align:center; border:1px solid rgba(203,216,255,.44); background:rgba(12,10,43,.76); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); border-radius:28px; padding:28px 24px; box-shadow:0 24px 90px rgba(0,0,0,.52),inset 0 0 34px rgba(109,97,255,.16); }
-    #card h1 { margin:0 0 8px; font-size:clamp(32px,9vw,48px); background:linear-gradient(90deg,#fff39b,#ff9ee7,#9ce7ff); -webkit-background-clip:text; background-clip:text; color:transparent; }
-    #card p { margin:8px 0 20px; line-height:1.6; color:#e3e7ff; }
-    #start { width:100%; border:0; border-radius:18px; padding:15px 18px; font-size:20px; font-weight:900; color:#171025; background:linear-gradient(90deg,#ffe56c,#ff9bd7,#86dcff); box-shadow:0 12px 35px rgba(123,117,255,.42); }
-    #error { display:none; position:fixed; inset:20px; z-index:20; padding:18px; overflow:auto; white-space:pre-wrap; background:#3d1020; border:1px solid #ff839c; border-radius:16px; }
+    :root{color-scheme:dark;--glass:rgba(12,15,54,.78);--line:rgba(175,205,255,.48)}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{width:100%;height:100%;margin:0;overflow:hidden;background:linear-gradient(#0a0d35,#17104a);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;touch-action:none}
+    canvas{display:block;width:100%;height:100%}
+    #hud{position:fixed;z-index:5;top:max(10px,env(safe-area-inset-top));left:10px;right:10px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}
+    .panel{background:var(--glass);border:1px solid var(--line);border-radius:15px;padding:9px 12px;box-shadow:0 8px 24px rgba(0,0,0,.25);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-weight:800;text-shadow:0 1px 4px #000}
+    #hint{max-width:70vw;font-size:13px}#score{white-space:nowrap}
+    #controls{position:fixed;z-index:6;left:0;right:0;bottom:max(12px,env(safe-area-inset-bottom));display:flex;align-items:end;justify-content:space-between;padding:14px;pointer-events:none}
+    .pad{display:grid;grid-template-columns:repeat(3,56px);grid-template-rows:repeat(2,56px);gap:7px;pointer-events:auto}
+    .btn{display:grid;place-items:center;border:1px solid rgba(215,230,255,.55);border-radius:16px;background:rgba(17,20,70,.78);color:#fff;font-size:21px;font-weight:900;box-shadow:0 8px 22px rgba(0,0,0,.28);user-select:none;-webkit-user-select:none}
+    .btn.active,.btn:active{transform:scale(.94);background:rgba(92,86,190,.92)}
+    #up{grid-column:2;grid-row:1}#left{grid-column:1;grid-row:2}#down{grid-column:2;grid-row:2}#right{grid-column:3;grid-row:2}
+    #jump{pointer-events:auto;width:88px;height:88px;border-radius:28px;background:linear-gradient(145deg,#ffe37a,#ffad4f);color:#201238;border-color:#fff1bd;font-size:18px;box-shadow:0 10px 26px rgba(255,172,70,.3)}
+    #overlay{position:fixed;z-index:10;inset:0;display:grid;place-items:center;padding:22px;background:rgba(5,6,28,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+    #card{width:min(92vw,440px);padding:27px 22px;text-align:center;background:rgba(14,16,60,.92);border:1px solid rgba(200,220,255,.5);border-radius:25px;box-shadow:0 24px 80px rgba(0,0,0,.48)}
+    #card h1{margin:0 0 8px;font-size:clamp(32px,9vw,46px);color:#fff2a8;text-shadow:0 0 18px rgba(255,161,217,.42)}
+    #card p{margin:8px 0 20px;line-height:1.6;color:#e6ebff}
+    #start,#restart{width:100%;border:0;border-radius:17px;padding:15px;font-size:20px;font-weight:900;color:#201238;background:linear-gradient(90deg,#ffe477,#ffb3df,#9fe8ff)}
+    #version{position:fixed;right:10px;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 102px);z-index:4;font-size:11px;color:rgba(255,255,255,.55);pointer-events:none}
+    #error{display:none;position:fixed;z-index:20;inset:20px;padding:18px;overflow:auto;white-space:pre-wrap;background:#3d1020;border:1px solid #ff839c;border-radius:16px}
   </style>
-  <script type="importmap">
-  {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
-  </script>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
 <body>
-  <div id="hud"><div id="hint" class="panel">收集全部星星，再走進終點光圈！</div><div id="score" class="panel">⭐ 0 / 5</div></div>
+  <div id="hud"><div id="hint" class="panel">收集 5 顆星星，再進入綠色終點。</div><div id="score" class="panel">⭐ 0 / 5</div></div>
   <div id="controls">
-    <div class="pad" aria-label="移動控制">
-      <button class="btn" id="up" data-key="forward">▲</button><button class="btn" id="left" data-key="left">◀</button><button class="btn" id="down" data-key="back">▼</button><button class="btn" id="right" data-key="right">▶</button>
-    </div>
+    <div class="pad"><button class="btn" id="up" data-key="forward">▲</button><button class="btn" id="left" data-key="left">◀</button><button class="btn" id="down" data-key="back">▼</button><button class="btn" id="right" data-key="right">▶</button></div>
     <button class="btn" id="jump" data-key="jump">跳躍</button>
   </div>
-  <div id="overlay"><div id="card"><h1>星光跳跳島</h1><p>控制可愛星球人跳上浮空平台，收集 5 顆星星。<br>支援手機觸控及鍵盤 WASD／方向鍵。</p><button id="start">開始遊戲</button></div></div>
+  <div id="version">v2・低光暈修正版</div>
+  <div id="overlay"><div id="card"><h1>星光跳跳島</h1><p>跳上彩色浮空平台，收集全部星星。<br>手機按方向鍵移動，按「跳躍」起跳。</p><button id="start">開始遊戲</button></div></div>
   <pre id="error"></pre>
 
   <script type="module">
     import * as THREE from 'three';
-    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
     import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
     const errorBox=document.getElementById('error');
-    window.addEventListener('error',e=>{ errorBox.style.display='block'; errorBox.textContent=`遊戲載入錯誤：\n${e.message}\n\n請重新整理頁面。`; });
+    window.addEventListener('error',e=>{errorBox.style.display='block';errorBox.textContent=`載入錯誤：\n${e.message}\n\n請重新整理頁面。`;});
 
-    const scene=new THREE.Scene(); scene.background=new THREE.Color(0x080625); scene.fog=new THREE.FogExp2(0x0a082d,.022);
-    const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,180); camera.position.set(7,7,11);
+    const scene=new THREE.Scene();
+    scene.background=new THREE.Color(0x090b2e);
+    scene.fog=new THREE.Fog(0x11113f,24,72);
+
+    const camera=new THREE.PerspectiveCamera(57,innerWidth/innerHeight,.1,130);
     const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
-    renderer.setSize(innerWidth,innerHeight); renderer.setPixelRatio(Math.min(devicePixelRatio,1.6)); renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.2; renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; document.body.prepend(renderer.domElement);
-    const composer=new EffectComposer(renderer); composer.addPass(new RenderPass(scene,camera)); const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.72,.65,.58); composer.addPass(bloom);
+    renderer.setSize(innerWidth,innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+    renderer.outputColorSpace=THREE.SRGBColorSpace;
+    renderer.toneMapping=THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure=.82;
+    renderer.shadowMap.enabled=true;
+    renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+    document.body.prepend(renderer.domElement);
 
-    scene.add(new THREE.HemisphereLight(0xaac8ff,0x160b35,2.1));
-    const sun=new THREE.DirectionalLight(0xffd7f4,3.2); sun.position.set(8,16,7); sun.castShadow=true; sun.shadow.mapSize.set(1024,1024); sun.shadow.camera.left=-24; sun.shadow.camera.right=24; sun.shadow.camera.top=24; sun.shadow.camera.bottom=-24; scene.add(sun);
-    const world=new THREE.Group(); scene.add(world);
+    scene.add(new THREE.HemisphereLight(0xa9c9ff,0x24153f,1.25));
+    const sun=new THREE.DirectionalLight(0xfff1dc,1.65);
+    sun.position.set(8,15,9);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);
+    sun.shadow.camera.left=-22;sun.shadow.camera.right=22;sun.shadow.camera.top=22;sun.shadow.camera.bottom=-22;
+    scene.add(sun);
+    const fill=new THREE.PointLight(0x8075ff,4.5,24,2);fill.position.set(-7,7,4);scene.add(fill);
 
-    const starPositions=[];
-    for(let i=0;i<850;i++){ const r=35+Math.random()*60,theta=Math.random()*Math.PI*2,phi=Math.acos(2*Math.random()-1); starPositions.push(r*Math.sin(phi)*Math.cos(theta),r*Math.cos(phi),r*Math.sin(phi)*Math.sin(theta)); }
-    const starGeo=new THREE.BufferGeometry(); starGeo.setAttribute('position',new THREE.Float32BufferAttribute(starPositions,3)); const starField=new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xb9d5ff,size:.13,transparent:true,opacity:.86})); scene.add(starField);
-
-    function makeGlowTexture(){ const c=document.createElement('canvas'); c.width=c.height=128; const ctx=c.getContext('2d'),g=ctx.createRadialGradient(64,64,0,64,64,64); g.addColorStop(0,'rgba(255,255,255,1)'); g.addColorStop(.22,'rgba(255,255,255,.55)'); g.addColorStop(1,'rgba(255,255,255,0)'); ctx.fillStyle=g; ctx.fillRect(0,0,128,128); const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; return t; }
-    const hazeMaterial=new THREE.SpriteMaterial({map:makeGlowTexture(),color:0x7c4dff,transparent:true,opacity:.32,blending:THREE.AdditiveBlending,depthWrite:false});
-    for(let i=0;i<16;i++){ const s=new THREE.Sprite(hazeMaterial.clone()); s.material.color.setHSL(Math.random(),.72,.58); s.position.set((Math.random()-.5)*55,Math.random()*24-4,(Math.random()-.5)*55-12); const k=8+Math.random()*15; s.scale.set(k,k,1); scene.add(s); }
-
-    function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
-    function makeLabel(text,color){ const c=document.createElement('canvas'); c.width=512;c.height=190;const ctx=c.getContext('2d');ctx.shadowBlur=26;ctx.shadowColor='#'+new THREE.Color(color).getHexString();ctx.strokeStyle=ctx.shadowColor;ctx.lineWidth=10;roundRect(ctx,20,20,472,150,38);ctx.stroke();ctx.shadowBlur=0;ctx.fillStyle='white';ctx.font='900 72px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,256,95);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));sprite.scale.set(5.1,1.9,1);return sprite; }
+    const starPos=[];
+    for(let i=0;i<600;i++){const r=36+Math.random()*54,a=Math.random()*Math.PI*2,y=(Math.random()-.5)*55;starPos.push(Math.cos(a)*r,y,Math.sin(a)*r);}
+    const starGeo=new THREE.BufferGeometry();starGeo.setAttribute('position',new THREE.Float32BufferAttribute(starPos,3));
+    const starField=new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xbfd5ff,size:.11,transparent:true,opacity:.72,depthWrite:false}));scene.add(starField);
 
     const platforms=[];
-    function addPlatform(x,y,z,w,d,color,label){ const group=new THREE.Group();group.position.set(x,y,z);world.add(group);const mat=new THREE.MeshStandardMaterial({color,emissive:new THREE.Color(color).multiplyScalar(.34),emissiveIntensity:.8,roughness:.48,metalness:.08});const mesh=new THREE.Mesh(new RoundedBoxGeometry(w,.62,d,5,.2),mat);mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);const glow=new THREE.Mesh(new RoundedBoxGeometry(w+.18,.12,d+.18,4,.22),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.48,blending:THREE.AdditiveBlending,depthWrite:false}));glow.position.y=-.28;group.add(glow);if(label){const sprite=makeLabel(label,color);sprite.position.set(0,2.15,0);group.add(sprite);}platforms.push({x,y,z,w,d,top:y+.31,group}); }
-    addPlatform(0,0,0,5.8,4.8,0x6f76ff,'起點'); addPlatform(-5,1.2,-5,4.3,3.4,0xffc34d,'月光'); addPlatform(1.2,2.45,-8.3,4.2,3.3,0xff72c6,'花島'); addPlatform(6.3,3.7,-5.2,4.2,3.4,0x55d8ff,'雲台'); addPlatform(7.9,5,1.1,4.4,3.4,0x9d77ff,'星橋'); addPlatform(2.3,6.3,5.5,4.4,3.4,0x64ffbd,'終點');
+    function addPlatform(x,y,z,w,d,color,label){
+      const mat=new THREE.MeshStandardMaterial({color,roughness:.48,metalness:.04,emissive:new THREE.Color(color).multiplyScalar(.035),emissiveIntensity:.25});
+      const mesh=new THREE.Mesh(new RoundedBoxGeometry(w,.68,d,5,.18),mat);mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;scene.add(mesh);
+      const rim=new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry,24),new THREE.LineBasicMaterial({color:new THREE.Color(color).lerp(new THREE.Color(0xffffff),.45),transparent:true,opacity:.48}));mesh.add(rim);
+      const tag=makeLabel(label,color);tag.position.set(x,y+1.75,z);scene.add(tag);
+      platforms.push({x,y,z,w,d,top:y+.34});
+    }
+    function makeLabel(text,color){
+      const c=document.createElement('canvas');c.width=512;c.height=150;const ctx=c.getContext('2d');
+      ctx.fillStyle='rgba(10,12,45,.82)';ctx.strokeStyle='#'+new THREE.Color(color).getHexString();ctx.lineWidth=9;ctx.beginPath();ctx.roundRect(18,18,476,114,30);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#fff';ctx.font='900 56px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,256,75);
+      const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
+      const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false,toneMapped:false}));sprite.scale.set(4.6,1.35,1);return sprite;
+    }
 
-    const player=new THREE.Group(); world.add(player);
-    const white=new THREE.MeshStandardMaterial({color:0xf5f3ff,roughness:.35,metalness:.06}),lilac=new THREE.MeshStandardMaterial({color:0xb7a8ff,emissive:0x3f2f91,emissiveIntensity:.34,roughness:.36}),dark=new THREE.MeshStandardMaterial({color:0x20183f,roughness:.45});
-    const body=new THREE.Mesh(new THREE.SphereGeometry(.62,24,18),lilac);body.scale.y=1.12;body.position.y=.72;body.castShadow=true;player.add(body);
-    const head=new THREE.Mesh(new THREE.SphereGeometry(.5,24,18),white);head.position.y=1.65;head.castShadow=true;player.add(head);
-    const cap=new THREE.Mesh(new THREE.ConeGeometry(.38,.58,18),new THREE.MeshStandardMaterial({color:0xffd25d,emissive:0x7d4b08,emissiveIntensity:.5}));cap.position.y=2.24;cap.rotation.z=-.15;player.add(cap);
-    const pom=new THREE.Mesh(new THREE.SphereGeometry(.14,16,12),white);pom.position.set(-.06,2.55,0);player.add(pom);
-    [-.18,.18].forEach(x=>{const eye=new THREE.Mesh(new THREE.SphereGeometry(.055,12,8),dark);eye.position.set(x,1.76,.47);player.add(eye);});
-    const scarf=new THREE.Mesh(new THREE.TorusGeometry(.43,.085,10,30),new THREE.MeshStandardMaterial({color:0xff6ea9,emissive:0x7a123c,emissiveIntensity:.55}));scarf.rotation.x=Math.PI/2;scarf.position.y=1.3;player.add(scarf);
-    const tail=new THREE.Group();for(let i=0;i<5;i++){const orb=new THREE.Mesh(new THREE.SphereGeometry(.13-i*.012,14,10),i%2?white:lilac);orb.position.set(0,i*.22,0);tail.add(orb);}tail.position.set(.57,.9,-.22);tail.rotation.z=-1.05;player.add(tail);
+    addPlatform(0,0,0,5.8,4.8,0x6d72d9,'起點');
+    addPlatform(-3.2,1.15,-4.1,4.2,3.2,0xd8a642,'月光');
+    addPlatform(.8,2.25,-7.1,4.1,3.2,0xd75fa8,'花島');
+    addPlatform(4.8,3.35,-4.2,4.1,3.2,0x4ebbd6,'雲台');
+    addPlatform(6,4.45,.5,4.2,3.2,0x866bd9,'星橋');
+    addPlatform(2.1,5.55,4.3,4.5,3.4,0x55c792,'終點');
 
-    const spawn=new THREE.Vector3(0,.32,0),velocity=new THREE.Vector3();let grounded=false,started=false,won=false;player.position.copy(spawn);
-    const pickups=[],pickupData=[[-5,2.25,-5],[1.2,3.5,-8.3],[6.3,4.75,-5.2],[7.9,6.05,1.1],[2.3,7.35,5.5]];
-    const starShape=new THREE.Shape();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2===0?.46:.21,x=Math.cos(a)*r,y=Math.sin(a)*r;i===0?starShape.moveTo(x,y):starShape.lineTo(x,y);}starShape.closePath();
-    const starGeometry=new THREE.ExtrudeGeometry(starShape,{depth:.16,bevelEnabled:true,bevelSize:.07,bevelThickness:.06,bevelSegments:2});starGeometry.center();
-    pickupData.forEach(([x,y,z])=>{const mesh=new THREE.Mesh(starGeometry,new THREE.MeshStandardMaterial({color:0xffe566,emissive:0xff7b00,emissiveIntensity:1.75,roughness:.25,metalness:.12}));mesh.position.set(x,y,z);mesh.castShadow=true;world.add(mesh);pickups.push({mesh,collected:false,baseY:y});});
+    const player=new THREE.Group();scene.add(player);
+    const white=new THREE.MeshStandardMaterial({color:0xf1f0ff,roughness:.5});
+    const lilac=new THREE.MeshStandardMaterial({color:0x9b8ddd,roughness:.48,emissive:0x160f35,emissiveIntensity:.12});
+    const dark=new THREE.MeshStandardMaterial({color:0x17132b,roughness:.6});
+    const body=new THREE.Mesh(new THREE.SphereGeometry(.62,22,16),lilac);body.scale.y=1.12;body.position.y=.72;body.castShadow=true;player.add(body);
+    const head=new THREE.Mesh(new THREE.SphereGeometry(.5,22,16),white);head.position.y=1.65;head.castShadow=true;player.add(head);
+    const cap=new THREE.Mesh(new THREE.ConeGeometry(.37,.58,18),new THREE.MeshStandardMaterial({color:0xe8b84d,roughness:.48}));cap.position.y=2.24;cap.rotation.z=-.12;player.add(cap);
+    const pom=new THREE.Mesh(new THREE.SphereGeometry(.14,14,10),white);pom.position.set(-.05,2.54,0);player.add(pom);
+    [-.18,.18].forEach(x=>{const eye=new THREE.Mesh(new THREE.SphereGeometry(.055,10,8),dark);eye.position.set(x,1.76,.47);player.add(eye);});
+    const scarf=new THREE.Mesh(new THREE.TorusGeometry(.43,.08,10,28),new THREE.MeshStandardMaterial({color:0xd9558f,roughness:.45}));scarf.rotation.x=Math.PI/2;scarf.position.y=1.3;player.add(scarf);
+    const tail=new THREE.Group();for(let i=0;i<5;i++){const orb=new THREE.Mesh(new THREE.SphereGeometry(.13-i*.012,12,9),i%2?white:lilac);orb.position.set(0,i*.22,0);tail.add(orb);}tail.position.set(.56,.88,-.2);tail.rotation.z=-1.03;player.add(tail);
 
-    const portal=new THREE.Group();portal.position.set(2.3,7.7,5.5);world.add(portal);const ringMat=new THREE.MeshStandardMaterial({color:0x4f5d80,emissive:0x11142a,emissiveIntensity:.3,roughness:.25,metalness:.4});const ring=new THREE.Mesh(new THREE.TorusGeometry(.95,.11,16,64),ringMat);portal.add(ring);const portalGlow=new THREE.Sprite(new THREE.SpriteMaterial({map:makeGlowTexture(),color:0x66ffd7,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false}));portalGlow.scale.set(3.6,3.6,1);portal.add(portalGlow);
+    const spawn=new THREE.Vector3(0,.35,0),velocity=new THREE.Vector3();player.position.copy(spawn);
+    let grounded=true,started=false,won=false,collected=0,jumpQueued=false;
+    const scoreEl=document.getElementById('score'),hintEl=document.getElementById('hint');
 
-    let collected=0;const scoreEl=document.getElementById('score'),hintEl=document.getElementById('hint');
-    const input={forward:false,back:false,left:false,right:false,jump:false};const keyMap={ArrowUp:'forward',KeyW:'forward',ArrowDown:'back',KeyS:'back',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',Space:'jump'};
-    addEventListener('keydown',e=>{const k=keyMap[e.code];if(k){input[k]=true;e.preventDefault();}},{passive:false});addEventListener('keyup',e=>{const k=keyMap[e.code];if(k){input[k]=false;e.preventDefault();}},{passive:false});
-    document.querySelectorAll('[data-key]').forEach(btn=>{const k=btn.dataset.key,press=e=>{e.preventDefault();input[k]=true;btn.classList.add('active');},release=e=>{e.preventDefault();input[k]=false;btn.classList.remove('active');};btn.addEventListener('pointerdown',press,{passive:false});btn.addEventListener('pointerup',release,{passive:false});btn.addEventListener('pointercancel',release,{passive:false});btn.addEventListener('pointerleave',release,{passive:false});});
-    document.getElementById('start').addEventListener('click',()=>{started=true;document.getElementById('overlay').style.display='none';});
+    const starShape=new THREE.Shape();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2===0?.42:.2,x=Math.cos(a)*r,y=Math.sin(a)*r;i?starShape.lineTo(x,y):starShape.moveTo(x,y);}starShape.closePath();
+    const starGeometry=new THREE.ExtrudeGeometry(starShape,{depth:.14,bevelEnabled:true,bevelSize:.05,bevelThickness:.05,bevelSegments:2});starGeometry.center();
+    const pickupData=[[-3.2,2.25,-4.1],[.8,3.35,-7.1],[4.8,4.45,-4.2],[6,5.55,.5],[2.1,6.65,4.3]];
+    const pickups=pickupData.map(([x,y,z])=>{const mesh=new THREE.Mesh(starGeometry,new THREE.MeshStandardMaterial({color:0xffd75e,roughness:.3,metalness:.1,emissive:0x6f3d00,emissiveIntensity:.35}));mesh.position.set(x,y,z);mesh.castShadow=true;scene.add(mesh);return{mesh,baseY:y,collected:false};});
 
-    function resetPlayer(){player.position.copy(spawn);velocity.set(0,0,0);grounded=false;hintEl.textContent='掉下去了！已回到起點。';setTimeout(()=>{if(!won)hintEl.textContent='收集全部星星，再走進終點光圈！';},1500);}
-    function showVictory(){won=true;started=false;const overlay=document.getElementById('overlay'),card=document.getElementById('card');card.innerHTML='<h1>成功過關！</h1><p>你已經收集全部星星，證明這個 Three.js 遊戲可以在 GitHub Pages 運行。</p><button id="restart" style="width:100%;border:0;border-radius:18px;padding:15px 18px;font-size:20px;font-weight:900;background:linear-gradient(90deg,#ffe56c,#ff9bd7,#86dcff);color:#171025">再玩一次</button>';overlay.style.display='grid';document.getElementById('restart').onclick=()=>location.reload();}
+    const portal=new THREE.Group();portal.position.set(2.1,6.65,4.3);scene.add(portal);
+    const ringMat=new THREE.MeshStandardMaterial({color:0x59617a,roughness:.28,metalness:.45,emissive:0x0d1220,emissiveIntensity:.1});
+    const ring=new THREE.Mesh(new THREE.TorusGeometry(.92,.11,14,48),ringMat);portal.add(ring);
+    const core=new THREE.Mesh(new THREE.CircleGeometry(.76,40),new THREE.MeshBasicMaterial({color:0x55d9aa,transparent:true,opacity:0,side:THREE.DoubleSide,toneMapped:false}));core.position.z=-.02;portal.add(core);
+
+    const input={forward:false,back:false,left:false,right:false};
+    const keyMap={ArrowUp:'forward',KeyW:'forward',ArrowDown:'back',KeyS:'back',ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right'};
+    addEventListener('keydown',e=>{if(e.code==='Space'){jumpQueued=true;e.preventDefault();return;}const k=keyMap[e.code];if(k){input[k]=true;e.preventDefault();}},{passive:false});
+    addEventListener('keyup',e=>{const k=keyMap[e.code];if(k){input[k]=false;e.preventDefault();}},{passive:false});
+    document.querySelectorAll('[data-key]').forEach(btn=>{const k=btn.dataset.key;const down=e=>{e.preventDefault();btn.classList.add('active');if(k==='jump')jumpQueued=true;else input[k]=true;};const up=e=>{e.preventDefault();btn.classList.remove('active');if(k!=='jump')input[k]=false;};btn.addEventListener('pointerdown',down,{passive:false});btn.addEventListener('pointerup',up,{passive:false});btn.addEventListener('pointercancel',up,{passive:false});btn.addEventListener('pointerleave',up,{passive:false});});
+    document.getElementById('start').onclick=()=>{started=true;document.getElementById('overlay').style.display='none';};
+
+    function resetPlayer(){player.position.copy(spawn);velocity.set(0,0,0);grounded=true;hintEl.textContent='掉下去了，已回到起點。';setTimeout(()=>{if(!won)hintEl.textContent='收集 5 顆星星，再進入綠色終點。';},1300);}
+    function win(){won=true;started=false;const overlay=document.getElementById('overlay'),card=document.getElementById('card');card.innerHTML='<h1>成功過關！</h1><p>畫面清晰、角色可移動、平台可跳躍，證明 Three.js 遊戲可以在 GitHub Pages 運行。</p><button id="restart">再玩一次</button>';overlay.style.display='grid';document.getElementById('restart').onclick=()=>location.reload();}
 
     const clock=new THREE.Clock(),desiredCamera=new THREE.Vector3(),lookTarget=new THREE.Vector3();
     function updatePlayer(dt){
-      if(!started||won)return;const accel=grounded?14:7,maxSpeed=grounded?5:4.2;let ix=(input.right?1:0)-(input.left?1:0),iz=(input.back?1:0)-(input.forward?1:0),len=Math.hypot(ix,iz)||1;ix/=len;iz/=len;velocity.x+=ix*accel*dt;velocity.z+=iz*accel*dt;const horizontal=Math.hypot(velocity.x,velocity.z);if(horizontal>maxSpeed){velocity.x*=maxSpeed/horizontal;velocity.z*=maxSpeed/horizontal;}const drag=grounded?Math.pow(.0008,dt):Math.pow(.18,dt);if(!ix)velocity.x*=drag;if(!iz)velocity.z*=drag;
-      if(input.jump&&grounded){velocity.y=7.3;grounded=false;input.jump=false;}velocity.y-=17.5*dt;const previousY=player.position.y;player.position.x+=velocity.x*dt;player.position.z+=velocity.z*dt;player.position.y+=velocity.y*dt;grounded=false;
-      if(velocity.y<=0){for(const p of platforms){const inside=Math.abs(player.position.x-p.x)<=p.w*.5-.18&&Math.abs(player.position.z-p.z)<=p.d*.5-.18;if(inside&&previousY>=p.top-.08&&player.position.y<=p.top+.08){player.position.y=p.top;velocity.y=0;grounded=true;break;}}}
-      const moveSpeed=Math.hypot(velocity.x,velocity.z);if(moveSpeed>.12)player.rotation.y=Math.atan2(velocity.x,velocity.z);const bob=grounded&&moveSpeed>.2?Math.sin(performance.now()*.012)*.035:0;body.position.y=.72+bob;head.position.y=1.65-bob*.45;tail.rotation.x=Math.sin(performance.now()*.006)*.25;if(player.position.y<-12)resetPlayer();
-      pickups.forEach((item,index)=>{if(!item.collected){const dx=player.position.x-item.mesh.position.x,dy=player.position.y+1.1-item.mesh.position.y,dz=player.position.z-item.mesh.position.z;if(dx*dx+dy*dy+dz*dz<1.45){item.collected=true;item.mesh.visible=false;collected++;scoreEl.textContent=`⭐ ${collected} / ${pickups.length}`;hintEl.textContent=collected===pickups.length?'終點光圈已啟動！':`收集到第 ${collected} 顆星！`;if(collected===pickups.length){ringMat.color.set(0x72ffe0);ringMat.emissive.set(0x00ffbb);ringMat.emissiveIntensity=2.2;portalGlow.material.opacity=.75;}}item.mesh.rotation.y+=dt*2.3;item.mesh.rotation.z=Math.sin(performance.now()*.0015+index)*.18;item.mesh.position.y=item.baseY+Math.sin(performance.now()*.002+index)*.18;}});
-      portal.rotation.y+=dt*.85;ring.rotation.z+=dt*.55;if(collected===pickups.length){const dx=player.position.x-portal.position.x,dy=player.position.y+1-portal.position.y,dz=player.position.z-portal.position.z;if(dx*dx+dy*dy+dz*dz<2.15)showVictory();}
+      if(!started||won)return;
+      let ix=(input.right?1:0)-(input.left?1:0),iz=(input.back?1:0)-(input.forward?1:0);const len=Math.hypot(ix,iz)||1;ix/=len;iz/=len;
+      const accel=grounded?13:6.5,maxSpeed=4.6;velocity.x+=ix*accel*dt;velocity.z+=iz*accel*dt;
+      const speed=Math.hypot(velocity.x,velocity.z);if(speed>maxSpeed){velocity.x*=maxSpeed/speed;velocity.z*=maxSpeed/speed;}
+      const drag=grounded?Math.pow(.002,dt):Math.pow(.22,dt);if(!ix)velocity.x*=drag;if(!iz)velocity.z*=drag;
+      if(jumpQueued&&grounded){velocity.y=7.1;grounded=false;}jumpQueued=false;
+      velocity.y-=17*dt;const previousY=player.position.y;player.position.addScaledVector(velocity,dt);grounded=false;
+      if(velocity.y<=0){for(const p of platforms){const inside=Math.abs(player.position.x-p.x)<=p.w*.5-.15&&Math.abs(player.position.z-p.z)<=p.d*.5-.15;if(inside&&previousY>=p.top-.12&&player.position.y<=p.top+.09){player.position.y=p.top;velocity.y=0;grounded=true;break;}}}
+      const moveSpeed=Math.hypot(velocity.x,velocity.z);if(moveSpeed>.12)player.rotation.y=Math.atan2(velocity.x,velocity.z);body.position.y=.72+(grounded&&moveSpeed>.2?Math.sin(performance.now()*.012)*.03:0);tail.rotation.x=Math.sin(performance.now()*.006)*.22;
+      if(player.position.y<-10)resetPlayer();
+      pickups.forEach((item,i)=>{if(item.collected)return;item.mesh.rotation.y+=dt*1.8;item.mesh.position.y=item.baseY+Math.sin(performance.now()*.002+i)*.12;const d=player.position.clone().add(new THREE.Vector3(0,1,0)).distanceTo(item.mesh.position);if(d<1.15){item.collected=true;item.mesh.visible=false;collected++;scoreEl.textContent=`⭐ ${collected} / 5`;hintEl.textContent=collected===5?'終點已啟動！走進綠色光圈。':`已收集 ${collected} 顆星星。`;if(collected===5){ringMat.color.set(0x55c792);ringMat.emissive.set(0x123c2b);ringMat.emissiveIntensity=.45;core.material.opacity=.34;}}});
+      portal.rotation.y+=dt*.55;if(collected===5&&player.position.clone().add(new THREE.Vector3(0,1,0)).distanceTo(portal.position)<1.35)win();
     }
-    function updateCamera(dt){desiredCamera.set(player.position.x+7.2,player.position.y+6.3,player.position.z+10.2);camera.position.lerp(desiredCamera,1-Math.pow(.0015,dt));lookTarget.set(player.position.x,player.position.y+1.1,player.position.z-1.8);camera.lookAt(lookTarget);}
-    function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.033);starField.rotation.y+=dt*.008;updatePlayer(dt);updateCamera(dt);composer.render();}animate();
-    addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));composer.setSize(innerWidth,innerHeight);bloom.setSize(innerWidth,innerHeight);});
+    function updateCamera(dt){desiredCamera.set(player.position.x+7.5,player.position.y+6.2,player.position.z+10.5);camera.position.lerp(desiredCamera,1-Math.pow(.002,dt));lookTarget.set(player.position.x,player.position.y+1.05,player.position.z-1.2);camera.lookAt(lookTarget);}
+    function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.033);starField.rotation.y+=dt*.006;updatePlayer(dt);updateCamera(dt);renderer.render(scene,camera);}animate();
+    addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));});
   </script>
 </body>
 </html>
